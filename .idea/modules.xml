@@ -4,6 +4,8 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/bebop.iml" filepath="$PROJECT_DIR$/bebop.iml" />
+      <module fileurl="file://$PROJECT_DIR$/bebopcommon/bebopcommon.iml" filepath="$PROJECT_DIR$/bebopcommon/bebopcommon.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rdio-android-3.1.0/rdio-android-3.1.0.iml" filepath="$PROJECT_DIR$/rdio-android-3.1.0/rdio-android-3.1.0.iml" />
     </modules>
   </component>
 </project>

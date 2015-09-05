@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/alarm_item_container"
+    android:layout_width="match_parent"
+    android:layout_height="150dp"
+    android:background="@color/bebop_primary">
+
+    <TextView
+        android:id="@+id/time_text"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:paddingStart="15dp"
+        android:paddingEnd="5dp"
+        android:text="12:00"
+        android:textStyle="normal"
+        android:textColor="@color/bebop_white"
+        android:textSize="40dp"
+        android:gravity="center"/>
+
+    <TextView
+        android:layout_toEndOf="@+id/time_text"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:paddingTop="18dp"
+        android:text="AM"
+        android:textStyle="normal"
+        android:textColor="@color/bebop_white"
+        android:textSize="10dp"
+        android:gravity="start|center"/>
+
+    <Switch
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="15dp"
+        android:id="@+id/alarm_state_switch"
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true"
+        android:checked="true" />
+
+</RelativeLayout>

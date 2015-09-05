@@ -1,0 +1,2 @@
+configurations.create("default")
+artifacts.add("default", file('rdio-android-3.1.0.aar'))
