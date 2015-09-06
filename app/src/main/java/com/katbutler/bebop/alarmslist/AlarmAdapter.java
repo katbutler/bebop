@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -22,6 +23,7 @@ import java.util.List;
 public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> {
 
     private final List<Alarm> mAlarms;
+    private OnAlarmStateChangeListener onAlarmStateChangeListener;
 
     public AlarmAdapter(List<Alarm> alarms) {
         mAlarms = alarms;
@@ -36,14 +38,34 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Alarm alarm = mAlarms.get(position);
+        final Alarm alarm = mAlarms.get(position);
 
         holder.setTime(alarm.getAlarmTime());
+        holder.setAlarmStateOn(alarm.isAlarmStateOn());
+        holder.setOnCheckedListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                alarm.setAlarmStateOn(isChecked);
+                getOnAlarmStateChangeListener().onAlarmStateChange(alarm);
+            }
+        });
+    }
+
+    public interface OnAlarmStateChangeListener {
+        void onAlarmStateChange(Alarm alarm);
     }
 
     @Override
     public int getItemCount() {
         return mAlarms.size();
+    }
+
+    public OnAlarmStateChangeListener getOnAlarmStateChangeListener() {
+        return onAlarmStateChangeListener;
+    }
+
+    public void setOnAlarmStateChangeListener(OnAlarmStateChangeListener onAlarmStateChangeListener) {
+        this.onAlarmStateChangeListener = onAlarmStateChangeListener;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -65,6 +87,14 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
 
             mTimeTextView.setText(fmtTime.print(time));
             mAmPmText.setText(fmtAmPm.print(time));
+        }
+
+        public void setOnCheckedListener(CompoundButton.OnCheckedChangeListener listener) {
+            mAlarmStateSwitch.setOnCheckedChangeListener(listener);
+        }
+
+        public void setAlarmStateOn(boolean alarmStateOn) {
+            mAlarmStateSwitch.setChecked(alarmStateOn);
         }
     }
 }
