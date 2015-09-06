@@ -16,6 +16,8 @@ import com.katbutler.bebopcommon.BaseFragment;
 import org.joda.time.LocalTime;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -56,6 +58,8 @@ public class AlarmsFragment extends BaseFragment<AlarmsPresenter, AlarmsPresente
         alarms.add(new Alarm(new LocalTime(2, 22)));
         alarms.add(new Alarm(new LocalTime(14, 10)));
         alarms.add(new Alarm(new LocalTime(12, 55)));
+
+        Collections.sort(alarms);
 
         mAlarmRecyclerView = findViewOnView(view,R.id.alarm_recyclerview);
         AlarmAdapter adapter = new AlarmAdapter(alarms);

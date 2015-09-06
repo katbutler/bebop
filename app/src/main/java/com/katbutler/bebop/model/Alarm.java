@@ -8,7 +8,7 @@ import java.util.Set;
 /**
  * Created by kat on 15-09-05.
  */
-public class Alarm {
+public class Alarm implements Comparable<Alarm>{
 
     private LocalTime alarmTime;
 
@@ -24,5 +24,10 @@ public class Alarm {
 
     public void setAlarmTime(LocalTime alarmTime) {
         this.alarmTime = alarmTime;
+    }
+
+    @Override
+    public int compareTo(Alarm another) {
+        return this.getAlarmTime().compareTo(another.getAlarmTime());
     }
 }
