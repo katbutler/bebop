@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="bebop_primary">#2190A3</color>
+    <color name="bebop_primary_light">#26a8be</color>
     <color name="bebop_primary_dark">#1A7D92</color>
     <color name="bebop_accent_primary">#E8340F</color>
     <color name="bebop_accent_secondary">#D69B71</color>

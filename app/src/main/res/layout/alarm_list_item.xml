@@ -15,26 +15,59 @@
         android:textStyle="normal"
         android:textColor="@color/bebop_white"
         android:textSize="40dp"
-        android:gravity="center"/>
+        android:layout_marginTop="40dp"/>
 
     <TextView
+        android:id="@+id/ampm_text"
         android:layout_toEndOf="@+id/time_text"
+        android:layout_marginTop="50dp"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:paddingTop="18dp"
         android:text="AM"
         android:textStyle="normal"
         android:textColor="@color/bebop_white"
-        android:textSize="10dp"
-        android:gravity="start|center"/>
+        android:textSize="10dp"/>
 
     <Switch
+        android:id="@+id/alarm_state_switch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="15dp"
-        android:id="@+id/alarm_state_switch"
-        android:layout_centerVertical="true"
+        android:layout_marginTop="50dp"
         android:layout_alignParentEnd="true"
         android:checked="true" />
+
+    <RelativeLayout
+        android:id="@+id/expander"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_above="@+id/alarm_divider">
+
+        <TextView
+            android:id="@+id/alarm_dow"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/tomorrow"
+            android:textColor="@color/bebop_white"
+            android:paddingStart="20dp"/>
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="20dp"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/ic_keyboard_arrow_down_white_24dp"/>
+
+    </RelativeLayout>
+    
+    <View
+        android:id="@+id/alarm_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/bebop_primary_light"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"/>
 
 </RelativeLayout>
