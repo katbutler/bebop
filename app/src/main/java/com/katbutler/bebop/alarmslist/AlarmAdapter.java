@@ -15,6 +15,7 @@ import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -49,6 +50,12 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
                 getOnAlarmStateChangeListener().onAlarmStateChange(alarm);
             }
         });
+    }
+
+    public void addAlarm(Alarm alarm) {
+        mAlarms.add(alarm);
+        Collections.sort(mAlarms);
+        notifyDataSetChanged();
     }
 
     public interface OnAlarmStateChangeListener {
