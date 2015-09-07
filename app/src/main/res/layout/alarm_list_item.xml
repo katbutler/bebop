@@ -24,7 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:paddingTop="18dp"
-        android:text="AM"
+        android:text="@string/am"
         android:textStyle="normal"
         android:textColor="@color/bebop_white"
         android:textSize="10dp"/>

@@ -13,8 +13,10 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.katbutler.bebop.alarm.AlarmActivity;
 import com.katbutler.bebop.alarmslist.AlarmAdapter;
 import com.katbutler.bebop.model.Alarm;
+import com.katbutler.bebop.utils.AlarmTimeUtils;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -33,13 +35,14 @@ public class MainActivity extends AppCompatActivity {
                 Alarm alarm = intent.getParcelableExtra(BebopIntents.EXTRA_ALARM);
 
                 if (alarm.isAlarmStateOn()) {
-                    Intent alarmIntent = new Intent(MainActivity.this, MainActivity.class);
+                    Intent alarmIntent = new Intent(MainActivity.this, AlarmActivity.class);
                     AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
                     PendingIntent pendingIntent = PendingIntent.getActivity(MainActivity.this, 0, alarmIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
-                    LocalTime now = new DateTime(DateTimeZone.forTimeZone(TimeZone.getDefault())).toLocalTime();
+                    LocalTime now = AlarmTimeUtils.getCurrentTime();
                     Seconds secs = Seconds.secondsBetween(now, alarm.getAlarmTime());
+
                     am.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + (secs.getSeconds() * 1000), pendingIntent);
                 }
             }

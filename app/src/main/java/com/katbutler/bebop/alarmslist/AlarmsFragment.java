@@ -19,6 +19,7 @@ import com.appeaser.sublimepickerlibrary.recurrencepicker.SublimeRecurrencePicke
 import com.katbutler.bebop.BebopIntents;
 import com.katbutler.bebop.R;
 import com.katbutler.bebop.model.Alarm;
+import com.katbutler.bebop.utils.AlarmTimeUtils;
 import com.katbutler.bebopcommon.BaseFragment;
 
 import org.joda.time.DateTime;
@@ -72,7 +73,7 @@ public class AlarmsFragment extends BaseFragment<AlarmsPresenter, AlarmsPresente
         alarms.add(new Alarm(new LocalTime(14, 22)));
         alarms.add(new Alarm(new LocalTime(12, 55)));
 
-        LocalTime now = new DateTime(DateTimeZone.forTimeZone(TimeZone.getDefault())).toLocalTime();
+        LocalTime now = AlarmTimeUtils.getCurrentTime();
 
         for (int i = 0; i < 100; i=i+5) {
             alarms.add(new Alarm(now.plusMinutes(i)));
@@ -85,10 +86,7 @@ public class AlarmsFragment extends BaseFragment<AlarmsPresenter, AlarmsPresente
         mAdapter.setOnAlarmStateChangeListener(new AlarmAdapter.OnAlarmStateChangeListener() {
             @Override
             public void onAlarmStateChange(Alarm alarm) {
-                Intent intent = new Intent(BebopIntents.ACTION_CHANGE_ALARM_STATE);
-                intent.putExtra(BebopIntents.EXTRA_ALARM, alarm);
-
-                LocalBroadcastManager.getInstance(getActivity().getApplicationContext()).sendBroadcast(intent);
+                broadcastAlarmStateChange(alarm);
             }
         });
         mAlarmRecyclerView.setAdapter(mAdapter);
@@ -109,6 +107,7 @@ public class AlarmsFragment extends BaseFragment<AlarmsPresenter, AlarmsPresente
                     public void onDateTimeRecurrenceSet(int year, int monthOfYear, int dayOfMonth, int hourOfDay, int minute, SublimeRecurrencePicker.RecurrenceOption recurrenceOption, String recurrenceRule) {
                         Alarm alarm = new Alarm(new LocalTime(hourOfDay, minute));
                         mAdapter.addAlarm(alarm);
+                        broadcastAlarmStateChange(alarm);
                     }
                 });
 
@@ -125,6 +124,13 @@ public class AlarmsFragment extends BaseFragment<AlarmsPresenter, AlarmsPresente
         });
 
         return view;
+    }
+
+    private void broadcastAlarmStateChange(Alarm alarm) {
+        Intent intent = new Intent(BebopIntents.ACTION_CHANGE_ALARM_STATE);
+        intent.putExtra(BebopIntents.EXTRA_ALARM, alarm);
+
+        LocalBroadcastManager.getInstance(getActivity().getApplicationContext()).sendBroadcast(intent);
     }
 
     // Validates & returns SublimePicker options

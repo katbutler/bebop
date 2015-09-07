@@ -7,4 +7,8 @@
     <string name="login">Login</string>
     <string name="key">Key</string>
     <string name="tomorrow">Tomorrow</string>
+    <string name="title_activity_alarm">AlarmActivity</string>
+    <string name="example_time">24:05</string>
+    <string name="alarm_off">Alarm Off</string>
+    <string name="am">AM</string>
 </resources>

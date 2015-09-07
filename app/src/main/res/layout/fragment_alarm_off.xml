@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bebop_primary">
+
+    <TextView
+        android:id="@+id/current_time_text"
+        android:text="@string/alarm_off"
+        android:textSize="60dp"
+        android:textStyle="italic"
+        android:textColor="@color/bebop_white"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="150dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_centerInParent="true"
+
+        android:src="@drawable/ic_alarm_off_white_48dp"/>
+
+</RelativeLayout>
