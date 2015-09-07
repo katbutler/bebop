@@ -32,7 +32,8 @@
         <activity
             android:name=".alarm.AlarmActivity"
             android:label="@string/title_activity_alarm"
-            android:noHistory="true">
+            android:excludeFromRecents="true"
+            android:showOnLockScreen="true">
         </activity>
     </application>
 

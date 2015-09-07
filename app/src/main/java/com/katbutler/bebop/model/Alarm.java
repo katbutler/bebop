@@ -1,6 +1,11 @@
 package com.katbutler.bebop.model;
 
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.CursorLoader;
+import android.content.Loader;
+import android.database.Cursor;
+import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -14,7 +19,38 @@ import java.util.Set;
 /**
  * Created by kat on 15-09-05.
  */
-public class Alarm implements Comparable<Alarm>, Parcelable{
+public class Alarm implements Comparable<Alarm>, Parcelable, BebopContract.AlarmsColumns {
+
+    /**
+     * The default sort order for this table
+     */
+    private static final String DEFAULT_SORT_ORDER =
+            HOUR + ", " +
+            MINUTES + " ASC" + ", " +
+            _ID + " DESC";
+
+    private static final String[] QUERY_COLUMNS = {
+            _ID,
+            HOUR,
+            MINUTES,
+            DAYS_OF_WEEK,
+            ENABLED,
+            VIBRATE,
+            LABEL,
+            RINGTONE_ID
+    };
+
+    /**
+     * These Column Indexes must match the order of the {@link Alarm#QUERY_COLUMNS}
+     */
+    private static final int ID_INDEX = 0;
+    private static final int HOUR_INDEX = 1;
+    private static final int MINUTES_INDEX = 2;
+    private static final int DAYS_OF_WEEK_INDEX = 3;
+    private static final int ENABLED_INDEX = 4;
+    private static final int VIBRATE_INDEX = 5;
+    private static final int LABEL_INDEX = 6;
+    private static final int RINGTONE_ID_INDEX = 7;
 
     private long id = -1;
     private LocalTime alarmTime;
@@ -137,16 +173,40 @@ public class Alarm implements Comparable<Alarm>, Parcelable{
         if (getId() != -1) {
             values.put(BebopContract.AlarmsColumns._ID, getId());
         }
-        values.put(BebopContract.AlarmsColumns.HOUR, getAlarmTime().getHourOfDay());
-        values.put(BebopContract.AlarmsColumns.MINUTES, getAlarmTime().getMinuteOfHour());
-        values.put(BebopContract.AlarmsColumns.DAYS_OF_WEEK, getDaysOfWeekMask());
-        values.put(BebopContract.AlarmsColumns.ENABLED, isAlarmStateOn());
-        values.put(BebopContract.AlarmsColumns.VIBRATE, isVibrateOn());
-        values.put(BebopContract.AlarmsColumns.LABEL, getLabel());
-        values.put(BebopContract.AlarmsColumns.RINGTONE_ID, ringtoneId);
+        values.put(HOUR, getAlarmTime().getHourOfDay());
+        values.put(MINUTES, getAlarmTime().getMinuteOfHour());
+        values.put(DAYS_OF_WEEK, getDaysOfWeekMask());
+        values.put(ENABLED, isAlarmStateOn());
+        values.put(VIBRATE, isVibrateOn());
+        values.put(LABEL, getLabel());
+        values.put(RINGTONE_ID, ringtoneId);
 
         return values;
     }
 
 
+    public static Alarm createFromCursor(Cursor cur) {
+        Long id = cur.getLong(ID_INDEX);
+        int hour = cur.getInt(HOUR_INDEX);
+        int min = cur.getInt(MINUTES_INDEX);
+        int dow = cur.getInt(DAYS_OF_WEEK_INDEX);
+        boolean enabled = cur.getInt(ENABLED_INDEX) == 1;
+        boolean vib = cur.getInt(VIBRATE_INDEX) == 1;
+        String label = cur.getString(LABEL_INDEX);
+        Long ringtoneId = cur.getLong(RINGTONE_ID_INDEX);
+
+        Alarm alarm = new Alarm(new LocalTime(hour, min));
+        alarm.setId(id);
+        alarm.setDaysOfWeekMask(dow);
+        alarm.setAlarmStateOn(enabled);
+        alarm.setVibrateOn(vib);
+        alarm.setLabel(label);
+        alarm.setRingtone(null);
+
+        return alarm;
+    }
+
+    public static Loader<Cursor> createCursorLoader(Context context, int id, Bundle args) {
+        return new CursorLoader(context, CONTENT_URI, QUERY_COLUMNS, null, null, DEFAULT_SORT_ORDER);
+    }
 }

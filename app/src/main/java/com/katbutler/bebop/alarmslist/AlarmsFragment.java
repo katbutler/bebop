@@ -1,8 +1,12 @@
 package com.katbutler.bebop.alarmslist;
 
 import android.app.DialogFragment;
+import android.app.LoaderManager;
 import android.content.Context;
+import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.Loader;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -19,6 +23,7 @@ import com.appeaser.sublimepickerlibrary.recurrencepicker.SublimeRecurrencePicke
 import com.katbutler.bebop.BebopIntents;
 import com.katbutler.bebop.R;
 import com.katbutler.bebop.model.Alarm;
+import com.katbutler.bebop.provider.BebopContract;
 import com.katbutler.bebop.utils.AlarmTimeUtils;
 import com.katbutler.bebopcommon.BaseFragment;
 
@@ -34,7 +39,7 @@ import java.util.TimeZone;
 /**
  * Created by kat on 15-09-05.
  */
-public class AlarmsFragment extends BaseFragment<AlarmsPresenter, AlarmsPresenter.AlarmsUi> implements AlarmsPresenter.AlarmsUi {
+public class AlarmsFragment extends BaseFragment<AlarmsPresenter, AlarmsPresenter.AlarmsUi> implements AlarmsPresenter.AlarmsUi, LoaderManager.LoaderCallbacks<Cursor> {
 
 
     private RecyclerView mAlarmRecyclerView;
@@ -55,6 +60,7 @@ public class AlarmsFragment extends BaseFragment<AlarmsPresenter, AlarmsPresente
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getLoaderManager().initLoader(0, null, this);
     }
 
     @Nullable
@@ -62,27 +68,8 @@ public class AlarmsFragment extends BaseFragment<AlarmsPresenter, AlarmsPresente
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_alarms, container);
 
-        List<Alarm> alarms = new ArrayList<>();
-        alarms.add(new Alarm(new LocalTime(7, 0)));
-        alarms.add(new Alarm(new LocalTime(15, 30)));
-        alarms.add(new Alarm(new LocalTime(11, 10)));
-        alarms.add(new Alarm(new LocalTime(5, 55)));
-        alarms.add(new Alarm(new LocalTime(6, 55)));
-        alarms.add(new Alarm(new LocalTime(2, 22)));
-        alarms.add(new Alarm(new LocalTime(14, 18)));
-        alarms.add(new Alarm(new LocalTime(14, 22)));
-        alarms.add(new Alarm(new LocalTime(12, 55)));
-
-        LocalTime now = AlarmTimeUtils.getCurrentTime();
-
-        for (int i = 0; i < 100; i=i+5) {
-            alarms.add(new Alarm(now.plusMinutes(i)));
-        }
-
-        Collections.sort(alarms);
-
         mAlarmRecyclerView = findViewOnView(view,R.id.alarm_recyclerview);
-        mAdapter = new AlarmAdapter(alarms);
+        mAdapter = new AlarmAdapter(null);
         mAdapter.setOnAlarmStateChangeListener(new AlarmAdapter.OnAlarmStateChangeListener() {
             @Override
             public void onAlarmStateChange(Alarm alarm) {
@@ -107,7 +94,7 @@ public class AlarmsFragment extends BaseFragment<AlarmsPresenter, AlarmsPresente
                     public void onDateTimeRecurrenceSet(int year, int monthOfYear, int dayOfMonth, int hourOfDay, int minute, SublimeRecurrencePicker.RecurrenceOption recurrenceOption, String recurrenceRule) {
                         Alarm alarm = new Alarm(new LocalTime(hourOfDay, minute));
                         getPresenter().addNewAlarm(alarm);
-                        mAdapter.addAlarm(alarm);
+                        mAdapter.notifyDataSetChanged();
                         broadcastAlarmStateChange(alarm);
                     }
                 });
@@ -157,5 +144,20 @@ public class AlarmsFragment extends BaseFragment<AlarmsPresenter, AlarmsPresente
     @Override
     public Context getContext() {
         return getActivity();
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return Alarm.createCursorLoader(getContext(), id, args);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        mAdapter.changeCursor(cursor);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
     }
 }
