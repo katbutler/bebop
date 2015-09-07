@@ -1,7 +1,10 @@
 package com.katbutler.bebop.model;
 
+import android.content.ContentValues;
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import com.katbutler.bebop.provider.BebopContract;
 
 import org.joda.time.Days;
 import org.joda.time.LocalTime;
@@ -13,9 +16,13 @@ import java.util.Set;
  */
 public class Alarm implements Comparable<Alarm>, Parcelable{
 
+    private long id = -1;
     private LocalTime alarmTime;
     private boolean alarmStateOn = true;
+    private boolean vibrateOn = true;
+    private String label = "";
     private int daysOfWeekMask = 0;
+    private Ringtone ringtone = Ringtone.createDefault();
 
     public Alarm(LocalTime alarmTime) {
         this.alarmTime = alarmTime;
@@ -45,6 +52,16 @@ public class Alarm implements Comparable<Alarm>, Parcelable{
     };
 
     //region accessors
+
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
     public LocalTime getAlarmTime() {
         return alarmTime;
     }
@@ -68,6 +85,31 @@ public class Alarm implements Comparable<Alarm>, Parcelable{
     public void setAlarmStateOn(boolean isOn) {
         this.alarmStateOn = isOn;
     }
+
+    public boolean isVibrateOn() {
+        return this.vibrateOn;
+    }
+
+    public void setVibrateOn(boolean vibrateOn) {
+        this.vibrateOn = vibrateOn;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public Ringtone getRingtone() {
+        return ringtone;
+    }
+
+    public void setRingtone(Ringtone ringtone) {
+        this.ringtone = ringtone;
+    }
+
     //endregion
 
     @Override
@@ -87,4 +129,24 @@ public class Alarm implements Comparable<Alarm>, Parcelable{
         dest.writeInt(isAlarmStateOn() ? 1 : 0);
         dest.writeInt(getDaysOfWeekMask());
     }
+
+    public ContentValues getContentValues(long ringtoneId) {
+        ContentValues values = new ContentValues();
+
+
+        if (getId() != -1) {
+            values.put(BebopContract.AlarmsColumns._ID, getId());
+        }
+        values.put(BebopContract.AlarmsColumns.HOUR, getAlarmTime().getHourOfDay());
+        values.put(BebopContract.AlarmsColumns.MINUTES, getAlarmTime().getMinuteOfHour());
+        values.put(BebopContract.AlarmsColumns.DAYS_OF_WEEK, getDaysOfWeekMask());
+        values.put(BebopContract.AlarmsColumns.ENABLED, isAlarmStateOn());
+        values.put(BebopContract.AlarmsColumns.VIBRATE, isVibrateOn());
+        values.put(BebopContract.AlarmsColumns.LABEL, getLabel());
+        values.put(BebopContract.AlarmsColumns.RINGTONE_ID, ringtoneId);
+
+        return values;
+    }
+
+
 }

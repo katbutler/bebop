@@ -11,4 +11,6 @@
     <string name="example_time">24:05</string>
     <string name="alarm_off">Alarm Off</string>
     <string name="am">AM</string>
+    <string name="no_service">No Service</string>
+    <string name="rdio">Rdio</string>
 </resources>

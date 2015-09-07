@@ -106,6 +106,7 @@ public class AlarmsFragment extends BaseFragment<AlarmsPresenter, AlarmsPresente
                     @Override
                     public void onDateTimeRecurrenceSet(int year, int monthOfYear, int dayOfMonth, int hourOfDay, int minute, SublimeRecurrencePicker.RecurrenceOption recurrenceOption, String recurrenceRule) {
                         Alarm alarm = new Alarm(new LocalTime(hourOfDay, minute));
+                        getPresenter().addNewAlarm(alarm);
                         mAdapter.addAlarm(alarm);
                         broadcastAlarmStateChange(alarm);
                     }

@@ -10,6 +10,12 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/BebopAppTheme" >
+
+        <provider
+            android:authorities="com.katbutler.bebop.provider"
+            android:name=".provider.BebopProvider"
+            android:exported="true"/>
+
         <activity
             android:name=".RdioExampleActivity"
             android:label="@string/title_activity_main" >

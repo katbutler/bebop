@@ -53,7 +53,7 @@ public final class BebopContract {
     /**
      * Constants for the Alarms table, which contains the user created alarms.
      */
-    protected interface AlarmsColumns extends AlarmSettingColumns, BaseColumns {
+    public interface AlarmsColumns extends AlarmSettingColumns, BaseColumns {
         /**
          * The content:// style URL for this table.
          */
@@ -91,7 +91,7 @@ public final class BebopContract {
     /**
      * Constants for the Instance table, which contains the state of each alarm.
      */
-    protected interface InstancesColumns extends AlarmSettingColumns, BaseColumns {
+    public interface InstancesColumns extends AlarmSettingColumns, BaseColumns {
         /**
          * The content:// style URL for this table.
          */
@@ -207,7 +207,7 @@ public final class BebopContract {
          * Alarm state
          * <p>Type: INTEGER</p>
          */
-        public static final String ALARM_STATE = "alarm_stae";
+        public static final String ALARM_STATE = "alarm_state";
     }
 
     public interface RingtonesColumns extends BaseColumns {
@@ -217,9 +217,14 @@ public final class BebopContract {
         public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/ringtones");
 
         /**
+         * No Music Service
+         */
+        public static final int MUSIC_SERVICE_NONE = 0;
+
+        /**
          * Rdio Music Service
          */
-        public static final int MUSIC_SERVICE_RDIO = 0;
+        public static final int MUSIC_SERVICE_RDIO = 1;
 
         /**
          * Remote key value as defined
