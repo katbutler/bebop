@@ -23,7 +23,7 @@ public class AlarmsPresenter extends Presenter<AlarmsPresenter.AlarmsUi> {
 
     public void addNewAlarm(Alarm alarm) {
         ContentResolver resolver = getUi().getContext().getContentResolver();
-        BebopDatabaseHelper.insertAlarm(resolver, alarm);
+        Alarm.insertAlarm(resolver, alarm);
     }
 
     public interface AlarmsUi extends Ui {

@@ -1,25 +1,31 @@
 package com.katbutler.bebop.model;
 
+import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.katbutler.bebop.provider.BebopContract;
 
-import org.joda.time.Days;
 import org.joda.time.LocalTime;
-
-import java.util.Set;
 
 /**
  * Created by kat on 15-09-05.
  */
-public class Alarm implements Comparable<Alarm>, Parcelable, BebopContract.AlarmsColumns {
+public class Alarm implements Comparable<Alarm>, Parcelable, BebopContract.AlarmsColumns, BebopContract.RingtonesColumns {
+
+    /**
+     * Alarms start with an invalid id when it hasn't been saved to the database.
+     */
+    public static final long INVALID_ID = -1;
 
     /**
      * The default sort order for this table
@@ -27,17 +33,19 @@ public class Alarm implements Comparable<Alarm>, Parcelable, BebopContract.Alarm
     private static final String DEFAULT_SORT_ORDER =
             HOUR + ", " +
             MINUTES + " ASC" + ", " +
-            _ID + " DESC";
+            ALARMS_TABLE_NAME + "." + _ID + " DESC";
 
     private static final String[] QUERY_COLUMNS = {
-            _ID,
+            ALARMS_TABLE_NAME + "." + _ID,
             HOUR,
             MINUTES,
             DAYS_OF_WEEK,
             ENABLED,
             VIBRATE,
             LABEL,
-            RINGTONE_ID
+            RINGTONE_ID,
+            RINGTONES_TABLE_NAME + "." + REMOTE_OBJECT_KEY,
+            RINGTONES_TABLE_NAME + "." + MUSIC_SERVICE
     };
 
     /**
@@ -51,17 +59,35 @@ public class Alarm implements Comparable<Alarm>, Parcelable, BebopContract.Alarm
     private static final int VIBRATE_INDEX = 5;
     private static final int LABEL_INDEX = 6;
     private static final int RINGTONE_ID_INDEX = 7;
+    private static final int REMOTE_OBJ_KEY_INDEX = 8;
+    private static final int MUSIC_SERVICE_INDEX = 9;
 
-    private long id = -1;
+    private static final int QUERY_COLUMN_COUNT = MUSIC_SERVICE_INDEX + 1;
+
+    private long id = INVALID_ID;
     private LocalTime alarmTime;
-    private boolean alarmStateOn = true;
+    private boolean enabled = true;
     private boolean vibrateOn = true;
     private String label = "";
-    private int daysOfWeekMask = 0;
+    private DaysOfWeek daysOfWeek = new DaysOfWeek(DaysOfWeek.NO_DAYS_SET);
     private Ringtone ringtone = Ringtone.createDefault();
 
     public Alarm(LocalTime alarmTime) {
         this.alarmTime = alarmTime;
+    }
+
+    public Alarm(LocalTime alarmTime, boolean enabled, boolean vibrateOn, String label, DaysOfWeek daysOfWeek, Ringtone ringtone) {
+        this(INVALID_ID, alarmTime, enabled, vibrateOn, label, daysOfWeek, ringtone);
+    }
+
+    public Alarm(long id, LocalTime alarmTime, boolean enabled, boolean vibrateOn, String label, DaysOfWeek daysOfWeek, Ringtone ringtone) {
+        this.id = id;
+        this.alarmTime = alarmTime;
+        this.enabled = enabled;
+        this.vibrateOn = vibrateOn;
+        this.label = label;
+        this.daysOfWeek = daysOfWeek;
+        this.ringtone = ringtone;
     }
 
     public Alarm(Parcel src) {
@@ -71,8 +97,8 @@ public class Alarm implements Comparable<Alarm>, Parcelable, BebopContract.Alarm
         int daysOfWeek = src.readInt();
 
         setAlarmTime(new LocalTime(hour, min));
-        setAlarmStateOn(alarmStateOn == 1);
-        setDaysOfWeekMask(daysOfWeek);
+        setEnabled(alarmStateOn == 1);
+        setDaysOfWeek(daysOfWeek);
     }
 
     public static final Creator<Alarm> CREATOR = new Creator<Alarm>() {
@@ -106,20 +132,28 @@ public class Alarm implements Comparable<Alarm>, Parcelable, BebopContract.Alarm
         this.alarmTime = alarmTime;
     }
 
-    public int getDaysOfWeekMask() {
-        return daysOfWeekMask;
+    public DaysOfWeek getDaysOfWeek() {
+        return daysOfWeek;
     }
 
-    public void setDaysOfWeekMask(int daysOfWeekMask) {
-        this.daysOfWeekMask = daysOfWeekMask;
+    public int getDaysOfWeekBitSet() {
+        return daysOfWeek.getBitSet();
     }
 
-    public boolean isAlarmStateOn() {
-        return alarmStateOn;
+    public void setDaysOfWeek(int daysOfWeekBitSet) {
+        this.daysOfWeek = new DaysOfWeek(daysOfWeekBitSet);
     }
 
-    public void setAlarmStateOn(boolean isOn) {
-        this.alarmStateOn = isOn;
+    public void setDaysOfWeek(DaysOfWeek daysOfWeek) {
+        this.daysOfWeek = daysOfWeek;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean isOn) {
+        this.enabled = isOn;
     }
 
     public boolean isVibrateOn() {
@@ -162,8 +196,43 @@ public class Alarm implements Comparable<Alarm>, Parcelable, BebopContract.Alarm
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(getAlarmTime().getHourOfDay());
         dest.writeInt(getAlarmTime().getMinuteOfHour());
-        dest.writeInt(isAlarmStateOn() ? 1 : 0);
-        dest.writeInt(getDaysOfWeekMask());
+        dest.writeInt(isEnabled() ? 1 : 0);
+        dest.writeInt(getDaysOfWeekBitSet());
+    }
+
+    public static Intent createIntent(String action, long alarmId) {
+        return new Intent(action).setData(getUri(alarmId));
+    }
+
+    public static Intent createIntent(Context context, Class<?> cls, long alarmId) {
+        return new Intent(context, cls).setData(getUri(alarmId));
+    }
+
+    public static Uri getUri(long alarmId) {
+        return ContentUris.withAppendedId(BebopContract.AlarmsColumns.CONTENT_URI, alarmId);
+    }
+
+    public static long getId(Uri contentUri) {
+        return ContentUris.parseId(contentUri);
+    }
+
+    /**
+     * Insert a new Alarm into the database
+     * @param resolver The Android Content Resolver
+     * @param alarm The Alarm to insert into the database
+     * @return true if the alarm was inserted otherwise false
+     */
+    public static Alarm insertAlarm(ContentResolver resolver, Alarm alarm) {
+        Uri ringtoneUri = resolver.insert(BebopContract.RingtonesColumns.CONTENT_URI, alarm.getRingtone().getContentValues());
+        if (ringtoneUri != null) {
+            long ringtoneId = getId(ringtoneUri);
+            Uri alarmUri = resolver.insert(BebopContract.AlarmsColumns.CONTENT_URI, alarm.getContentValues(ringtoneId));
+            if (alarmUri != null) {
+                alarm.setId(getId(alarmUri));
+                return alarm;
+            }
+        }
+        return null;
     }
 
     public ContentValues getContentValues(long ringtoneId) {
@@ -175,8 +244,8 @@ public class Alarm implements Comparable<Alarm>, Parcelable, BebopContract.Alarm
         }
         values.put(HOUR, getAlarmTime().getHourOfDay());
         values.put(MINUTES, getAlarmTime().getMinuteOfHour());
-        values.put(DAYS_OF_WEEK, getDaysOfWeekMask());
-        values.put(ENABLED, isAlarmStateOn());
+        values.put(DAYS_OF_WEEK, getDaysOfWeekBitSet());
+        values.put(ENABLED, isEnabled());
         values.put(VIBRATE, isVibrateOn());
         values.put(LABEL, getLabel());
         values.put(RINGTONE_ID, ringtoneId);
@@ -194,19 +263,21 @@ public class Alarm implements Comparable<Alarm>, Parcelable, BebopContract.Alarm
         boolean vib = cur.getInt(VIBRATE_INDEX) == 1;
         String label = cur.getString(LABEL_INDEX);
         Long ringtoneId = cur.getLong(RINGTONE_ID_INDEX);
+        String remoteObjKey = cur.getString(REMOTE_OBJ_KEY_INDEX);
+        RemoteMusicService service = RemoteMusicService.remoteMusicService(cur.getInt(MUSIC_SERVICE_INDEX));
 
         Alarm alarm = new Alarm(new LocalTime(hour, min));
         alarm.setId(id);
-        alarm.setDaysOfWeekMask(dow);
-        alarm.setAlarmStateOn(enabled);
+        alarm.setDaysOfWeek(dow);
+        alarm.setEnabled(enabled);
         alarm.setVibrateOn(vib);
         alarm.setLabel(label);
-        alarm.setRingtone(null);
+        alarm.setRingtone(new Ringtone(ringtoneId, remoteObjKey, service));
 
         return alarm;
     }
 
     public static Loader<Cursor> createCursorLoader(Context context, int id, Bundle args) {
-        return new CursorLoader(context, CONTENT_URI, QUERY_COLUMNS, null, null, DEFAULT_SORT_ORDER);
+        return new CursorLoader(context, BebopContract.AlarmsColumns.CONTENT_URI, QUERY_COLUMNS, null, null, DEFAULT_SORT_ORDER);
     }
 }

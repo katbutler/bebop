@@ -23,6 +23,11 @@ public class Ringtone {
         this.remoteMusicService = remoteMusicService;
     }
 
+    public Ringtone(long ringtoneId, String remoteObjKey, RemoteMusicService service) {
+        this(remoteObjKey, service);
+        setId(ringtoneId);
+    }
+
     public long getId() {
         return id;
     }

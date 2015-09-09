@@ -59,6 +59,8 @@ public final class BebopContract {
          */
         public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/alarms");
 
+        public static final String ALARMS_TABLE_NAME = BebopDatabaseHelper.ALARMS_TABLE_NAME;
+
         /**
          * Hour in 24-hour localtime 0 - 23.
          * <p>Type: INTEGER</p>
@@ -96,6 +98,9 @@ public final class BebopContract {
          * The content:// style URL for this table.
          */
         public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/instances");
+
+
+        public static final String INSTANCES_TABLE_NAME = BebopDatabaseHelper.INSTANCES_TABLE_NAME;
 
         /**
          * Alarm state when to show no notification.
@@ -215,6 +220,8 @@ public final class BebopContract {
          * The content:// style URL for this table.
          */
         public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/ringtones");
+
+        public static final String RINGTONES_TABLE_NAME = BebopDatabaseHelper.RINGTONES_TABLE_NAME;
 
         /**
          * No Music Service

@@ -48,7 +48,14 @@ public class BebopProvider extends ContentProvider{
 
         switch (match) {
             case ALARMS:
-                qb.setTables(BebopDatabaseHelper.ALARMS_TABLE_NAME);
+                qb.setTables(BebopDatabaseHelper.ALARMS_TABLE_NAME +
+                        " JOIN " +
+                        BebopDatabaseHelper.RINGTONES_TABLE_NAME +
+                        " ON (" +
+                        BebopDatabaseHelper.ALARMS_TABLE_NAME + "." + BebopContract.AlarmsColumns.RINGTONE_ID +
+                        " = " +
+                        BebopDatabaseHelper.RINGTONES_TABLE_NAME + "." + BebopContract.RingtonesColumns._ID +
+                ")");
                 break;
             case ALARMS_ID:
                 qb.setTables(BebopDatabaseHelper.ALARMS_TABLE_NAME);

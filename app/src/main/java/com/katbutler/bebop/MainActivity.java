@@ -6,7 +6,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.SystemClock;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,16 +13,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.katbutler.bebop.alarm.AlarmActivity;
-import com.katbutler.bebop.alarmslist.AlarmAdapter;
 import com.katbutler.bebop.model.Alarm;
 import com.katbutler.bebop.utils.AlarmTimeUtils;
 
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.joda.time.LocalTime;
 import org.joda.time.Seconds;
-
-import java.util.TimeZone;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
                 Alarm alarm = intent.getParcelableExtra(BebopIntents.EXTRA_ALARM);
 
-                if (alarm.isAlarmStateOn()) {
+                if (alarm.isEnabled()) {
                     Intent alarmIntent = new Intent(MainActivity.this, AlarmActivity.class);
                     AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 

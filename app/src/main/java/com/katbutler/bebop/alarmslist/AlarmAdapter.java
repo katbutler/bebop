@@ -17,9 +17,6 @@ import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import java.util.Collections;
-import java.util.List;
-
 /**
  * Created by kat on 15-09-05.
  */
@@ -110,11 +107,11 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         final Alarm alarm = Alarm.createFromCursor(cur);
 
         holder.setTime(alarm.getAlarmTime());
-        holder.setAlarmStateOn(alarm.isAlarmStateOn());
+        holder.setAlarmStateOn(alarm.isEnabled());
         holder.setOnCheckedListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                alarm.setAlarmStateOn(isChecked);
+                alarm.setEnabled(isChecked);
                 getOnAlarmStateChangeListener().onAlarmStateChange(alarm);
             }
         });

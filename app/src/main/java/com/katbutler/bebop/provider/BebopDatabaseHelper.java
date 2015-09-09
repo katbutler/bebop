@@ -129,27 +129,4 @@ public class BebopDatabaseHelper extends SQLiteOpenHelper{
         return rowId;
     }
 
-    /**
-     * Insert a new Alarm into the database
-     * @param resolver The Android Content Resolver
-     * @param alarm The Alarm to insert into the database
-     * @return true if the alarm was inserted otherwise false
-     */
-    public static boolean insertAlarm(ContentResolver resolver, Alarm alarm) {
-        Uri ringtoneUri = resolver.insert(BebopContract.RingtonesColumns.CONTENT_URI, alarm.getRingtone().getContentValues());
-        if (ringtoneUri != null) {
-            long ringtoneId = getRingtonId(ringtoneUri);
-            Uri alarmUri = resolver.insert(BebopContract.AlarmsColumns.CONTENT_URI, alarm.getContentValues(ringtoneId));
-            return alarmUri != null;
-        }
-        return false;
-    }
-
-    public static long getAlarmId(Uri alarmUri) {
-        return Long.parseLong(alarmUri.getLastPathSegment());
-    }
-
-    public static long getRingtonId(Uri ringtoneUri) {
-        return Long.parseLong(ringtoneUri.getLastPathSegment());
-    }
 }
