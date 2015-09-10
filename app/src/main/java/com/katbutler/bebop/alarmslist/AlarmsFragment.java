@@ -74,6 +74,7 @@ public class AlarmsFragment extends BaseFragment<AlarmsPresenter, AlarmsPresente
             @Override
             public void onAlarmStateChange(Alarm alarm) {
                 broadcastAlarmStateChange(alarm);
+                Alarm.updateAlarm(getContext().getContentResolver(), alarm);
             }
         });
         mAlarmRecyclerView.setAdapter(mAdapter);

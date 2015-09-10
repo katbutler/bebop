@@ -2,6 +2,8 @@ package com.katbutler.bebop;
 
 import android.app.Application;
 
+import com.katbutler.bebop.utils.BebopLog;
+
 import net.danlew.android.joda.JodaTimeAndroid;
 
 /**
@@ -9,9 +11,14 @@ import net.danlew.android.joda.JodaTimeAndroid;
  */
 public class BebopApplication extends Application {
 
+    private static final String TAG = BebopApplication.class.getSimpleName();
+
     @Override
     public void onCreate() {
         super.onCreate();
+
+        BebopLog.v(TAG, "Application onCreate()");
+
         JodaTimeAndroid.init(this);
     }
 }

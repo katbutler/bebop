@@ -19,14 +19,14 @@ public class AlarmInstance {
     private String label = "";
     private DaysOfWeek daysOfWeek = new DaysOfWeek(DaysOfWeek.NO_DAYS_SET);
     private Ringtone ringtone = Ringtone.createDefault();
-    private AlarmState alarmState = AlarmState.SILENT_STATE;
+    private int alarmState = AlarmState.SILENT_STATE;
     private long alarmId = INVALID_ID;
 
-    public AlarmInstance(DateTime instanceTime, boolean enabled, boolean vibrateOn, String label, DaysOfWeek daysOfWeek, Ringtone ringtone, AlarmState alarmState, long alarmId) {
+    public AlarmInstance(DateTime instanceTime, boolean enabled, boolean vibrateOn, String label, DaysOfWeek daysOfWeek, Ringtone ringtone, @AlarmState int alarmState, long alarmId) {
         this(INVALID_ID, instanceTime, enabled, vibrateOn, label, daysOfWeek, ringtone, alarmState, alarmId);
     }
 
-    public AlarmInstance(long id, DateTime instanceTime, boolean enabled, boolean vibrateOn, String label, DaysOfWeek daysOfWeek, Ringtone ringtone, AlarmState alarmState, long alarmId) {
+    public AlarmInstance(long id, DateTime instanceTime, boolean enabled, boolean vibrateOn, String label, DaysOfWeek daysOfWeek, Ringtone ringtone, @AlarmState int alarmState, long alarmId) {
         this.id = id;
         this.instanceTime = instanceTime;
         this.enabled = enabled;
@@ -94,11 +94,12 @@ public class AlarmInstance {
         this.ringtone = ringtone;
     }
 
-    public AlarmState getAlarmState() {
+    @AlarmState
+    public int getAlarmState() {
         return alarmState;
     }
 
-    public void setAlarmState(AlarmState alarmState) {
+    public void setAlarmState(@AlarmState int alarmState) {
         this.alarmState = alarmState;
     }
 

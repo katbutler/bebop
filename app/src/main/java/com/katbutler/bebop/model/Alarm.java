@@ -14,6 +14,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.katbutler.bebop.provider.BebopContract;
+import com.katbutler.bebop.utils.BebopLog;
 
 import org.joda.time.LocalTime;
 
@@ -115,6 +116,9 @@ public class Alarm implements Comparable<Alarm>, Parcelable, BebopContract.Alarm
 
     //region accessors
 
+    public boolean hasId() {
+        return getId() != INVALID_ID;
+    }
 
     public long getId() {
         return id;
@@ -146,6 +150,10 @@ public class Alarm implements Comparable<Alarm>, Parcelable, BebopContract.Alarm
 
     public void setDaysOfWeek(DaysOfWeek daysOfWeek) {
         this.daysOfWeek = daysOfWeek;
+    }
+
+    public boolean isRepeating() {
+        return getDaysOfWeek().isRepeating();
     }
 
     public boolean isEnabled() {
@@ -200,46 +208,55 @@ public class Alarm implements Comparable<Alarm>, Parcelable, BebopContract.Alarm
         dest.writeInt(getDaysOfWeekBitSet());
     }
 
+    /**
+     * Create an Intent with the Data set to this Alarm
+     * @param action The Action string to use for the intent
+     * @param alarmId The Alarm ID to use as the Alarm Data Uri
+     * @return The new Intent for this Alarm instance
+     */
     public static Intent createIntent(String action, long alarmId) {
         return new Intent(action).setData(getUri(alarmId));
     }
 
+    /**
+     * Create an Intent with the Data set to this Alarm
+     * @param context The Context
+     * @param cls The Class to create the Intent with
+     * @param alarmId The Alarm ID to use as the Alarm Data Uri
+     * @return The new Intent for this Alarm instance
+     */
     public static Intent createIntent(Context context, Class<?> cls, long alarmId) {
         return new Intent(context, cls).setData(getUri(alarmId));
     }
 
+    /**
+     * Create a Uri for a specific alarm.
+     * {@link BebopContract.AlarmsColumns#CONTENT_URI} with the ID appended.
+     * @param alarmId The Alarm ID to append
+     * @return The Uri to a specific alarm resource in the BebopProvider
+     */
     public static Uri getUri(long alarmId) {
         return ContentUris.withAppendedId(BebopContract.AlarmsColumns.CONTENT_URI, alarmId);
     }
 
+    /**
+     * Parse the ID from the Alarm Resource Uri
+     * @param contentUri The resource Uri to the Alarm
+     * @return The ID parsed from the Uri
+     */
     public static long getId(Uri contentUri) {
         return ContentUris.parseId(contentUri);
     }
 
-    /**
-     * Insert a new Alarm into the database
-     * @param resolver The Android Content Resolver
-     * @param alarm The Alarm to insert into the database
-     * @return true if the alarm was inserted otherwise false
-     */
-    public static Alarm insertAlarm(ContentResolver resolver, Alarm alarm) {
-        Uri ringtoneUri = resolver.insert(BebopContract.RingtonesColumns.CONTENT_URI, alarm.getRingtone().getContentValues());
-        if (ringtoneUri != null) {
-            long ringtoneId = getId(ringtoneUri);
-            Uri alarmUri = resolver.insert(BebopContract.AlarmsColumns.CONTENT_URI, alarm.getContentValues(ringtoneId));
-            if (alarmUri != null) {
-                alarm.setId(getId(alarmUri));
-                return alarm;
-            }
-        }
-        return null;
-    }
 
-    public ContentValues getContentValues(long ringtoneId) {
+    /**
+     * @return the ContentValues for this Alarm Instance
+     */
+    public ContentValues createContentValues() {
         ContentValues values = new ContentValues();
 
 
-        if (getId() != -1) {
+        if (hasId()) {
             values.put(BebopContract.AlarmsColumns._ID, getId());
         }
         values.put(HOUR, getAlarmTime().getHourOfDay());
@@ -248,7 +265,12 @@ public class Alarm implements Comparable<Alarm>, Parcelable, BebopContract.Alarm
         values.put(ENABLED, isEnabled());
         values.put(VIBRATE, isVibrateOn());
         values.put(LABEL, getLabel());
-        values.put(RINGTONE_ID, ringtoneId);
+
+        if (getRingtone().hasId()) {
+            values.put(RINGTONE_ID, getRingtone().getId());
+        } else {
+            BebopLog.wtf("Cannot createContentValues for Alarm with an invalid Ringtone.");
+        }
 
         return values;
     }
@@ -264,7 +286,7 @@ public class Alarm implements Comparable<Alarm>, Parcelable, BebopContract.Alarm
         String label = cur.getString(LABEL_INDEX);
         Long ringtoneId = cur.getLong(RINGTONE_ID_INDEX);
         String remoteObjKey = cur.getString(REMOTE_OBJ_KEY_INDEX);
-        RemoteMusicService service = RemoteMusicService.remoteMusicService(cur.getInt(MUSIC_SERVICE_INDEX));
+        RemoteMusicServiceType service = RemoteMusicServiceType.remoteMusicService(cur.getInt(MUSIC_SERVICE_INDEX));
 
         Alarm alarm = new Alarm(new LocalTime(hour, min));
         alarm.setId(id);
@@ -279,5 +301,64 @@ public class Alarm implements Comparable<Alarm>, Parcelable, BebopContract.Alarm
 
     public static Loader<Cursor> createCursorLoader(Context context, int id, Bundle args) {
         return new CursorLoader(context, BebopContract.AlarmsColumns.CONTENT_URI, QUERY_COLUMNS, null, null, DEFAULT_SORT_ORDER);
+    }
+
+
+    /**
+     * Insert or Update Ringtone based on whether the Ringtone ID is valid.
+     * @param resolver The ContentResolver to operate on
+     * @param alarm The Ringtone to upsert
+     * @return The Ringtone after inserting or updating with a valid ID set
+     */
+    public static Alarm upsertRingtone(ContentResolver resolver, Alarm alarm) {
+        if (alarm.hasId()) {
+            return updateAlarm(resolver, alarm);
+        }
+        return insertAlarm(resolver, alarm);
+    }
+
+    /**
+     * Insert a new Alarm into the BebopProvider. The Alarm must have an
+     * invalid ID when inserting.
+     * @param resolver The ContentResolver to operate on
+     * @param alarm The Alarm to insert
+     * @return The Alarm with the newly created ID from the ContentProvider
+     */
+    public static Alarm insertAlarm(ContentResolver resolver, Alarm alarm) {
+        Ringtone.upsertRingtone(resolver, alarm.getRingtone());
+        Uri alarmUri = resolver.insert(BebopContract.AlarmsColumns.CONTENT_URI, alarm.createContentValues());
+        if (alarmUri == null) {
+            BebopLog.wtf("The ringtone could not be inserted! Null ringtoneUri");
+        } else {
+            alarm.setId(getId(alarmUri));
+        }
+        return alarm;
+    }
+
+    /**
+     * Update a Alarm in the BebopProvider. The Alarm must have a valid
+     * ID when updating.
+     * @param resolver The ContentResolver to operate on
+     * @param alarm The Alarm to update
+     * @return The Alarm object as passed into this function. If the number
+     * of updated rows does not equal 1 a WTF will occur.
+     */
+    public static Alarm updateAlarm(ContentResolver resolver, Alarm alarm) {
+        int updated = resolver.update(getUri(alarm.getId()), alarm.createContentValues(), null, null);
+        if (updated != 1) {
+            BebopLog.wtf("One alarm should have been updated but instead %d alarms were updated.", updated);
+        }
+        return alarm;
+    }
+
+    /**
+     * Delete an Alarm in the BebopProvider. The Alarm must have a valid
+     * ID when deleting
+     * @param resolver The ContentResolver to operate on
+     * @param alarm The Alarm to delete
+     * @return The Alarm object as passed into this function.
+     */
+    public static Alarm deleteAlarm(ContentResolver resolver, Alarm alarm) {
+        throw new UnsupportedOperationException("deleteAlarm has not been implemented");
     }
 }

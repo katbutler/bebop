@@ -3,6 +3,8 @@ package com.katbutler.bebop.provider;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
+import com.katbutler.bebop.model.AlarmState;
+
 /**
  * Created by kat on 15-09-07.
  */
@@ -108,7 +110,7 @@ public final class BebopContract {
          * Can transitions to:
          * LOW_NOTIFICATION_STATE
          */
-        public static final int SILENT_STATE = 0;
+        public static final int SILENT_STATE = AlarmState.SILENT_STATE;
 
         /**
          * Alarm state to show low priority alarm notification.
@@ -118,7 +120,7 @@ public final class BebopContract {
          * HIGH_NOTIFICATION_STATE
          * DISMISSED_STATE
          */
-        public static final int LOW_NOTIFICATION_STATE = 1;
+        public static final int LOW_NOTIFICATION_STATE = AlarmState.LOW_NOTIFICATION_STATE;
 
         /**
          * Alarm state to hide low priority alarm notification.
@@ -126,7 +128,7 @@ public final class BebopContract {
          * Can transitions to:
          * HIGH_NOTIFICATION_STATE
          */
-        public static final int HIDE_NOTIFICATION_STATE = 2;
+        public static final int HIDE_NOTIFICATION_STATE = AlarmState.HIDE_NOTIFICATION_STATE;
 
         /**
          * Alarm state to show high priority alarm notification.
@@ -135,7 +137,7 @@ public final class BebopContract {
          * DISMISSED_STATE
          * FIRED_STATE
          */
-        public static final int HIGH_NOTIFICATION_STATE = 3;
+        public static final int HIGH_NOTIFICATION_STATE = AlarmState.HIGH_NOTIFICATION_STATE;
 
         /**
          * Alarm state when alarm is in snooze.
@@ -144,7 +146,7 @@ public final class BebopContract {
          * DISMISSED_STATE
          * FIRED_STATE
          */
-        public static final int SNOOZE_STATE = 4;
+        public static final int SNOOZE_STATE = AlarmState.SNOOZE_STATE;
 
         /**
          * Alarm state when alarm is being fired.
@@ -154,7 +156,7 @@ public final class BebopContract {
          * SNOOZED_STATE
          * MISSED_STATE
          */
-        public static final int FIRED_STATE = 5;
+        public static final int FIRED_STATE = AlarmState.FIRED_STATE;
 
         /**
          * Alarm state when alarm has been missed.
@@ -162,12 +164,12 @@ public final class BebopContract {
          * Can transitions to:
          * DISMISSED_STATE
          */
-        public static final int MISSED_STATE = 6;
+        public static final int MISSED_STATE = AlarmState.MISSED_STATE;
 
         /**
          * Alarm state when alarm is done.
          */
-        public static final int DISMISSED_STATE = 7;
+        public static final int DISMISSED_STATE = AlarmState.DISMISSED_STATE;
 
         /**
          * Alarm year.

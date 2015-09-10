@@ -10,6 +10,8 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.util.Log;
 
+import com.katbutler.bebop.utils.BebopLog;
+
 /**
  * Created by kat on 15-09-07.
  */
@@ -86,7 +88,7 @@ public class BebopProvider extends ContentProvider{
         Cursor ret = qb.query(db, projection, selection, selectionArgs, null, null, sortOrder);
 
         if(ret == null) {
-            Log.e(TAG, "Alarms.query failed");
+            BebopLog.e(TAG, "Alarms.query failed");
         } else {
             ret.setNotificationUri(getContext().getContentResolver(), uri);
         }
@@ -172,7 +174,7 @@ public class BebopProvider extends ContentProvider{
                         "Cannot update URL: " + uri);
             }
         }
-        Log.v(TAG, "*** notifyChange() id: " + alarmId + " url " + uri);
+        BebopLog.v(TAG, "*** notifyChange() id: " + alarmId + " url " + uri);
         getContext().getContentResolver().notifyChange(uri, null);
         return count;
     }

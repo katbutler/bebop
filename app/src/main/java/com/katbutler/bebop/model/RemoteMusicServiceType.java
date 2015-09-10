@@ -7,13 +7,13 @@ import com.katbutler.bebop.R;
 /**
  * Music Services supported by Bebop
  */
-public enum RemoteMusicService {
+public enum RemoteMusicServiceType {
     NO_SERVICE(R.string.no_service),
     RDIO(R.string.rdio);
 
     int mServiceNameStringRes;
 
-    RemoteMusicService(int serviceNameStringRes) {
+    RemoteMusicServiceType(int serviceNameStringRes) {
         this.mServiceNameStringRes = serviceNameStringRes;
     }
 
@@ -22,8 +22,8 @@ public enum RemoteMusicService {
     }
 
 
-    public static RemoteMusicService remoteMusicService(int ordinal) {
-        for (RemoteMusicService service : values()) {
+    public static RemoteMusicServiceType remoteMusicService(int ordinal) {
+        for (RemoteMusicServiceType service : values()) {
             if (service.ordinal() == ordinal) {
                 return service;
             }

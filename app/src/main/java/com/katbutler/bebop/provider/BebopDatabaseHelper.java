@@ -1,16 +1,13 @@
 package com.katbutler.bebop.provider;
 
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.net.Uri;
-import android.util.Log;
 
-import com.katbutler.bebop.model.Alarm;
+import com.katbutler.bebop.utils.BebopLog;
 
 /**
  * Created by kat on 15-09-07.
@@ -47,7 +44,7 @@ public class BebopDatabaseHelper extends SQLiteOpenHelper{
                 BebopContract.RingtonesColumns.MUSIC_SERVICE + " INTEGER NOT NULL" +
                 ");");
 
-        Log.i(TAG, "Ringtones table created");
+        BebopLog.i(TAG, "Ringtones table created");
     }
 
     private void createAlarmInstancesTable(SQLiteDatabase db) {
@@ -68,7 +65,7 @@ public class BebopDatabaseHelper extends SQLiteOpenHelper{
                 "ON UPDATE CASCADE ON DELETE CASCADE" +
                 ");");
 
-        Log.i(TAG, "Instance table created");
+        BebopLog.i(TAG, "Instance table created");
     }
 
     private void createAlarmsTable(SQLiteDatabase db) {
@@ -85,7 +82,7 @@ public class BebopDatabaseHelper extends SQLiteOpenHelper{
                     "ON UPDATE CASCADE ON DELETE CASCADE" +
                 ");");
 
-        Log.i(TAG, "Alarms Table created");
+        BebopLog.i(TAG, "Alarms Table created");
     }
 
     @Override
@@ -124,7 +121,7 @@ public class BebopDatabaseHelper extends SQLiteOpenHelper{
         if (rowId < 0) {
             throw new SQLException("Failed to insert row");
         }
-        Log.v(TAG, "Added alarm rowId = " + rowId);
+        BebopLog.v(TAG, "Added alarm rowId = " + rowId);
 
         return rowId;
     }
