@@ -13,6 +13,8 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.katbutler.bebop.musicservice.RemoteMusicObject;
+import com.katbutler.bebop.musicservice.RemoteMusicServiceType;
 import com.katbutler.bebop.provider.BebopContract;
 import com.katbutler.bebop.utils.BebopLog;
 
@@ -287,6 +289,7 @@ public class Alarm implements Comparable<Alarm>, Parcelable, BebopContract.Alarm
         Long ringtoneId = cur.getLong(RINGTONE_ID_INDEX);
         String remoteObjKey = cur.getString(REMOTE_OBJ_KEY_INDEX);
         RemoteMusicServiceType service = RemoteMusicServiceType.remoteMusicService(cur.getInt(MUSIC_SERVICE_INDEX));
+        RemoteMusicObject musicObject = RemoteMusicObject.createRemoteMusicObject(remoteObjKey, service);
 
         Alarm alarm = new Alarm(new LocalTime(hour, min));
         alarm.setId(id);
@@ -294,7 +297,7 @@ public class Alarm implements Comparable<Alarm>, Parcelable, BebopContract.Alarm
         alarm.setEnabled(enabled);
         alarm.setVibrateOn(vib);
         alarm.setLabel(label);
-        alarm.setRingtone(new Ringtone(ringtoneId, remoteObjKey, service));
+        alarm.setRingtone(new Ringtone(ringtoneId, musicObject, service));
 
         return alarm;
     }

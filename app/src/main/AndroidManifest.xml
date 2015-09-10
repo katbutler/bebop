@@ -13,11 +13,10 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/BebopAppTheme" >
-
         <provider
-            android:authorities="com.katbutler.bebop.provider"
             android:name=".provider.BebopProvider"
-            android:exported="true"/>
+            android:authorities="com.katbutler.bebop.provider"
+            android:exported="true" />
 
         <activity
             android:name=".RdioExampleActivity"
@@ -26,21 +25,37 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name" >
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN" />-->
+
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
+        </activity>
+        <activity
+            android:name=".alarm.AlarmActivity"
+            android:excludeFromRecents="true"
+            android:label="@string/title_activity_alarm"
+            android:showOnLockScreen="true" >
+        </activity>
+
+        <receiver
+            android:name=".alarms.AlarmStateManager"
+            android:exported="false" >
+        </receiver>
+
+        <activity
+            android:name=".SpotifyExampleActivity"
+            android:label="@string/title_activity_spotify_example" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
-            android:name=".alarm.AlarmActivity"
-            android:label="@string/title_activity_alarm"
-            android:excludeFromRecents="true"
-            android:showOnLockScreen="true">
-        </activity>
-        <receiver android:name=".alarms.AlarmStateManager"
-            android:exported="false">
-        </receiver>
+            android:name="com.spotify.sdk.android.authentication.LoginActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
     </application>
 
 </manifest>

@@ -5,6 +5,9 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.net.Uri;
 
+import com.katbutler.bebop.musicservice.RemoteMusicObject;
+import com.katbutler.bebop.musicservice.RemoteMusicServiceType;
+import com.katbutler.bebop.musicservice.local.LocalMusicObject;
 import com.katbutler.bebop.provider.BebopContract;
 import com.katbutler.bebop.utils.BebopLog;
 
@@ -19,21 +22,17 @@ public class Ringtone implements BebopContract.RingtonesColumns {
     public static final long INVALID_ID = -1;
 
     private long id = INVALID_ID;
-    private String remoteObjectKey = "";
+    private RemoteMusicObject remoteMusicObject;
     private RemoteMusicServiceType remoteMusicServiceType = RemoteMusicServiceType.NO_SERVICE;
 
-    public Ringtone(Uri ringtoneUri) {
-        this(ringtoneUri.toString(), RemoteMusicServiceType.NO_SERVICE);
+    public Ringtone(RemoteMusicObject remoteMusicObject) {
+        this(INVALID_ID, remoteMusicObject, remoteMusicObject.belongsToRemoteMusicService());
     }
 
-    public Ringtone(String remoteObjectKey, RemoteMusicServiceType remoteMusicServiceType) {
-        this.remoteObjectKey = remoteObjectKey;
+    public Ringtone(long ringtoneId, RemoteMusicObject remoteMusicObject, RemoteMusicServiceType remoteMusicServiceType) {
+        this.id = ringtoneId;
+        this.remoteMusicObject = remoteMusicObject;
         this.remoteMusicServiceType = remoteMusicServiceType;
-    }
-
-    public Ringtone(long ringtoneId, String remoteObjKey, RemoteMusicServiceType service) {
-        this(remoteObjKey, service);
-        setId(ringtoneId);
     }
 
     public boolean hasId() {
@@ -48,12 +47,12 @@ public class Ringtone implements BebopContract.RingtonesColumns {
         this.id = id;
     }
 
-    public String getRemoteObjectKey() {
-        return remoteObjectKey;
+    public RemoteMusicObject getRemoteMusicObject() {
+        return remoteMusicObject;
     }
 
-    public void setRemoteObjectKey(String remoteObjectKey) {
-        this.remoteObjectKey = remoteObjectKey;
+    public void setRemoteMusicObject(RemoteMusicObject remoteMusicObject) {
+        this.remoteMusicObject = remoteMusicObject;
     }
 
     public RemoteMusicServiceType getRemoteMusicServiceType() {
@@ -78,14 +77,14 @@ public class Ringtone implements BebopContract.RingtonesColumns {
         if (getId() != -1) {
             values.put(BebopContract.RingtonesColumns._ID, getId());
         }
-        values.put(BebopContract.RingtonesColumns.REMOTE_OBJECT_KEY, getRemoteObjectKey());
+        values.put(BebopContract.RingtonesColumns.REMOTE_OBJECT_KEY, getRemoteMusicObject().getKey());
         values.put(BebopContract.RingtonesColumns.MUSIC_SERVICE, getRemoteMusicServiceType().ordinal());
 
         return values;
     }
 
     public static Ringtone createDefault() {
-        return new Ringtone(BebopContract.AlarmsColumns.NO_RINGTONE_URI);
+        return new Ringtone(new LocalMusicObject(BebopContract.AlarmsColumns.NO_RINGTONE_URI));
     }
 
     /**
