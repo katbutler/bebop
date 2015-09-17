@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if (alarm.isEnabled()) {
                     Intent alarmIntent = new Intent(MainActivity.this, AlarmActivity.class);
+                    alarmIntent.putExtra(AlarmActivity.EXTRA_ALARM, alarm);
                     AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
                     PendingIntent pendingIntent = PendingIntent.getActivity(MainActivity.this, 0, alarmIntent, PendingIntent.FLAG_CANCEL_CURRENT);

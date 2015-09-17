@@ -41,7 +41,8 @@ public class BebopDatabaseHelper extends SQLiteOpenHelper{
         db.execSQL("CREATE TABLE " + RINGTONES_TABLE_NAME + " (" +
                 BebopContract.RingtonesColumns._ID + " INTEGER PRIMARY KEY," +
                 BebopContract.RingtonesColumns.REMOTE_OBJECT_KEY + " TEXT NOT NULL," +
-                BebopContract.RingtonesColumns.MUSIC_SERVICE + " INTEGER NOT NULL" +
+                BebopContract.RingtonesColumns.MUSIC_SERVICE + " INTEGER NOT NULL," +
+                BebopContract.RingtonesColumns.REMOTE_DATA + " TEXT" +
                 ");");
 
         BebopLog.i(TAG, "Ringtones table created");

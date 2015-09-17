@@ -1,4 +1,4 @@
-package com.katbutler.bebop.service;
+package com.katbutler.bebop.musicservice;
 
 /**
  * Created by kat on 15-09-05.

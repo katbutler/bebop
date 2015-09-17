@@ -4,14 +4,17 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.net.Uri;
+import android.os.Parcel;
+import android.os.Parcelable;
 
+import com.katbutler.bebop.musicservice.RemoteMusicServiceType;
 import com.katbutler.bebop.provider.BebopContract;
 import com.katbutler.bebop.utils.BebopLog;
 
 /**
  * Ringtone Model for remote services
  */
-public class Ringtone implements BebopContract.RingtonesColumns {
+public class Ringtone implements BebopContract.RingtonesColumns, Parcelable {
 
     /**
      * Ringtones start with an invalid id when it hasn't been saved to the database.
@@ -21,6 +24,15 @@ public class Ringtone implements BebopContract.RingtonesColumns {
     private long id = INVALID_ID;
     private String remoteObjectKey = "";
     private RemoteMusicServiceType remoteMusicServiceType = RemoteMusicServiceType.NO_SERVICE;
+    private String remoteData;
+
+    private Ringtone(Parcel in) {
+        id = in.readLong();
+        remoteObjectKey = in.readString();
+        remoteData = in.readString();
+        int serviceTypeOrdinal = in.readInt();
+        remoteMusicServiceType = RemoteMusicServiceType.remoteMusicService(serviceTypeOrdinal);
+    }
 
     public Ringtone(Uri ringtoneUri) {
         this(ringtoneUri.toString(), RemoteMusicServiceType.NO_SERVICE);
@@ -52,6 +64,14 @@ public class Ringtone implements BebopContract.RingtonesColumns {
         return remoteObjectKey;
     }
 
+    public String getRemoteData() {
+        return remoteData;
+    }
+
+    public void setRemoteData(String remoteData) {
+        this.remoteData = remoteData;
+    }
+
     public void setRemoteObjectKey(String remoteObjectKey) {
         this.remoteObjectKey = remoteObjectKey;
     }
@@ -78,8 +98,9 @@ public class Ringtone implements BebopContract.RingtonesColumns {
         if (getId() != -1) {
             values.put(BebopContract.RingtonesColumns._ID, getId());
         }
-        values.put(BebopContract.RingtonesColumns.REMOTE_OBJECT_KEY, getRemoteObjectKey());
-        values.put(BebopContract.RingtonesColumns.MUSIC_SERVICE, getRemoteMusicServiceType().ordinal());
+        values.put(REMOTE_OBJECT_KEY, getRemoteObjectKey());
+        values.put(MUSIC_SERVICE, getRemoteMusicServiceType().ordinal());
+        values.put(REMOTE_DATA, getRemoteData());
 
         return values;
     }
@@ -144,4 +165,29 @@ public class Ringtone implements BebopContract.RingtonesColumns {
     public static Ringtone deleteRingtone(ContentResolver resolver, Ringtone ringtone) {
         throw new UnsupportedOperationException("deleteRingtone has not been implemented");
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(getId());
+        dest.writeString(getRemoteObjectKey());
+        dest.writeString(getRemoteData() == null ? "" : getRemoteData());
+        dest.writeInt(getRemoteMusicServiceType().ordinal());
+    }
+
+    public static final Creator<Ringtone> CREATOR = new Creator<Ringtone>() {
+        @Override
+        public Ringtone createFromParcel(Parcel in) {
+            return new Ringtone(in);
+        }
+
+        @Override
+        public Ringtone[] newArray(int size) {
+            return new Ringtone[size];
+        }
+    };
 }

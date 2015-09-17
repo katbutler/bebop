@@ -248,6 +248,11 @@ public final class BebopContract {
          */
         public static final String MUSIC_SERVICE = "music_service";
 
+        /**
+         * Music service
+         * <p>Type: TEXT</p>
+         */
+        public static final String REMOTE_DATA = "remote_data";
 
 
     }

@@ -7,14 +7,14 @@
     <RelativeLayout
         android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp">
 
         <TextView
             android:id="@+id/current_time_text"
             android:text="@string/example_time"
             android:textSize="70sp"
             android:textColor="@color/bebop_white"
-            android:layout_marginTop="100dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
@@ -27,11 +27,17 @@
             android:paddingEnd="10dp"
             android:textColor="@color/bebop_white"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="100dp"
             android:layout_toEndOf="@id/current_time_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
     </RelativeLayout>
+
+    <ImageButton
+        android:id="@+id/alarm_off_btn"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_centerInParent="true"
+        android:background="@drawable/ic_alarm_off_white_48dp" />
 
 </RelativeLayout>

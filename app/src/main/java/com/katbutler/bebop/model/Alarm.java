@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.katbutler.bebop.musicservice.RemoteMusicServiceType;
 import com.katbutler.bebop.provider.BebopContract;
 import com.katbutler.bebop.utils.BebopLog;
 
@@ -75,6 +76,7 @@ public class Alarm implements Comparable<Alarm>, Parcelable, BebopContract.Alarm
 
     public Alarm(LocalTime alarmTime) {
         this.alarmTime = alarmTime;
+        setRingtone(new Ringtone(Uri.parse("content://media/internal/audio/media/24")));
     }
 
     public Alarm(LocalTime alarmTime, boolean enabled, boolean vibrateOn, String label, DaysOfWeek daysOfWeek, Ringtone ringtone) {
@@ -96,10 +98,12 @@ public class Alarm implements Comparable<Alarm>, Parcelable, BebopContract.Alarm
         int min = src.readInt();
         int alarmStateOn = src.readInt();
         int daysOfWeek = src.readInt();
+        Ringtone ringtone = src.readParcelable(Ringtone.class.getClassLoader());
 
         setAlarmTime(new LocalTime(hour, min));
         setEnabled(alarmStateOn == 1);
         setDaysOfWeek(daysOfWeek);
+        setRingtone(ringtone);
     }
 
     public static final Creator<Alarm> CREATOR = new Creator<Alarm>() {
@@ -206,6 +210,7 @@ public class Alarm implements Comparable<Alarm>, Parcelable, BebopContract.Alarm
         dest.writeInt(getAlarmTime().getMinuteOfHour());
         dest.writeInt(isEnabled() ? 1 : 0);
         dest.writeInt(getDaysOfWeekBitSet());
+        dest.writeParcelable(getRingtone(), 0);
     }
 
     /**
