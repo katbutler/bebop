@@ -39,7 +39,6 @@ public class CurrentAlarmFragment extends BaseFragment<CurrentAlarmPresenter, Cu
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getPresenter().playAlarm(mAlarm);
     }
 
     @Nullable
@@ -86,5 +85,6 @@ public class CurrentAlarmFragment extends BaseFragment<CurrentAlarmPresenter, Cu
 
     public void playAlarm(Alarm alarm) {
         mAlarm = alarm;
+        getPresenter().playAlarm(mAlarm);
     }
 }

@@ -2,6 +2,7 @@ package com.katbutler.bebop;
 
 import android.app.Application;
 
+import com.katbutler.bebop.musicservice.spotify.SpotifyPreferences;
 import com.katbutler.bebop.utils.BebopLog;
 
 import net.danlew.android.joda.JodaTimeAndroid;
@@ -19,6 +20,10 @@ public class BebopApplication extends Application {
 
         BebopLog.v(TAG, "Application onCreate()");
 
+        // Initialize JodaTime
         JodaTimeAndroid.init(this);
+
+        // Initialize the Spotify Preferences with the Application
+        SpotifyPreferences.init(this);
     }
 }

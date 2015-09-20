@@ -14,6 +14,8 @@ import android.view.MenuItem;
 
 import com.katbutler.bebop.alarm.AlarmActivity;
 import com.katbutler.bebop.model.Alarm;
+import com.katbutler.bebop.musicservice.spotify.SpotifyConstants;
+import com.katbutler.bebop.musicservice.spotify.SpotifyPreferences;
 import com.katbutler.bebop.utils.AlarmTimeUtils;
 
 import org.joda.time.LocalTime;

@@ -23,6 +23,8 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':rdio-android-3.1.0')
     compile project(':bebopcommon')
+
+    // Android Support libraries
     compile 'com.android.support:design:23.0.1'
     compile 'com.android.support:appcompat-v7:23.0.1'
     compile 'com.android.support:cardview-v7:23.0.1'
@@ -42,6 +44,10 @@ dependencies {
     compile 'com.google.http-client:google-http-client-android:1.18.0-rc'
     compile 'com.google.oauth-client:google-oauth-client:1.18.0-rc'
     compile 'com.google.code.gson:gson:2.3.1'
+
+    // Spotify Dependencies
+    compile 'com.spotify.sdk:spotify-auth:1.0.0-beta10@aar'
+    compile 'com.spotify.sdk:spotify-player:1.0.0-beta10@aar'
 
     // Test Dependencies
     testCompile 'junit:junit:4.12'

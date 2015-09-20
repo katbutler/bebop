@@ -28,4 +28,5 @@
          screen to identify repetition schedule: concatenate days with
          this character, i.e. "Mon, Tue, Wed" -->
     <string name="day_concat">", "</string>
+    <string name="spotify">Spotify</string>
 </resources>

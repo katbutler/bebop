@@ -11,9 +11,10 @@ public abstract class RemoteMusicObject<T> {
     private RemoteMusicServiceType serviceType;
     private Context mContext;
 
-    public static RemoteMusicObject createRemoteMusicObject(String key, String data, RemoteMusicServiceType type) {
+    public static RemoteMusicObject createRemoteMusicObject(Context context, String key, String data, RemoteMusicServiceType type) {
         try {
             RemoteMusicObject obj = type.getRemoteMusicClass().newInstance();
+            obj.init(context);
             obj.setKey(key);
             obj.setData(data);
             obj.setServiceType(type);
@@ -32,7 +33,7 @@ public abstract class RemoteMusicObject<T> {
 
     public abstract void onStop();
 
-    public void init(Context context) {
+    protected void init(Context context) {
         mContext = context;
     }
 

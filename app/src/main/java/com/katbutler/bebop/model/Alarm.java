@@ -76,7 +76,9 @@ public class Alarm implements Comparable<Alarm>, Parcelable, BebopContract.Alarm
 
     public Alarm(LocalTime alarmTime) {
         this.alarmTime = alarmTime;
-        setRingtone(new Ringtone(Uri.parse("content://media/internal/audio/media/24")));
+        Ringtone ring = new Ringtone("spotify:track:4mnVTZqDC2fy2Sh1ooKEse", RemoteMusicServiceType.SPOTIFY);
+        setRingtone(ring);
+//        setRingtone(new Ringtone(Uri.parse("content://media/internal/audio/media/24")));
     }
 
     public Alarm(LocalTime alarmTime, boolean enabled, boolean vibrateOn, String label, DaysOfWeek daysOfWeek, Ringtone ringtone) {

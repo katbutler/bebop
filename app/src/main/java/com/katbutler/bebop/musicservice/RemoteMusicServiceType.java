@@ -5,13 +5,15 @@ import android.content.res.Resources;
 import com.katbutler.bebop.R;
 import com.katbutler.bebop.musicservice.local.LocalMusicObject;
 import com.katbutler.bebop.musicservice.rdio.RdioMusicObject;
+import com.katbutler.bebop.musicservice.spotify.SpotifyMusicObject;
 
 /**
  * Music Services supported by Bebop
  */
 public enum RemoteMusicServiceType {
     NO_SERVICE(R.string.no_service, LocalMusicObject.class),
-    RDIO(R.string.rdio, RdioMusicObject.class);
+    RDIO(R.string.rdio, RdioMusicObject.class),
+    SPOTIFY(R.string.spotify, SpotifyMusicObject.class);
 
     int mServiceNameStringRes;
     Class<? extends RemoteMusicObject> mClazz;

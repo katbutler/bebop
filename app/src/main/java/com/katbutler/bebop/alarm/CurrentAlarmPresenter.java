@@ -23,12 +23,13 @@ public class CurrentAlarmPresenter extends Presenter<CurrentAlarmPresenter.Curre
     }
 
     public void playAlarm(Alarm alarm) {
-        mMusicObj = RemoteMusicObject.createRemoteMusicObject(alarm.getRingtone().getRemoteObjectKey(),
+        mMusicObj = RemoteMusicObject.createRemoteMusicObject(
+                getUi().getContext(),
+                alarm.getRingtone().getRemoteObjectKey(),
                 alarm.getRingtone().getRemoteData(),
                 alarm.getRingtone().getRemoteMusicServiceType());
 
         if (mMusicObj != null) {
-            mMusicObj.init(getUi().getContext());
             mMusicObj.play();
         } else {
             BebopLog.wtf("Why doesn't this music object exist?!");
