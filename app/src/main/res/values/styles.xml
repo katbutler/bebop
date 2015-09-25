@@ -29,6 +29,9 @@
              overflow icon (three vertical dots) -->
         <item name="android:textColorSecondary">@color/bebop_white</item>
 
+        <!--<item name="android:colorControlActivated">@color/bebop_white</item>-->
+        <!--<item name="android:colorControlNormal">@color/bebop_white</item>-->
+
         <item name="colorPrimary">@color/bebop_primary</item>
         <!--   darker variant for the status bar and contextual app bars -->
         <item name="colorPrimaryDark">@color/bebop_primary_dark</item>
@@ -44,6 +47,19 @@
         <item name="colorControlNormal">@color/bebop_white</item>
         <item name="colorControlActivated">@color/bebop_accent_secondary</item>
         <item name="colorControlHighlight">@color/bebop_accent_secondary</item>
+    </style>
+
+    <style name="body">
+        <item name="android:textSize">@dimen/body_font_size</item>
+    </style>
+
+    <style name="body_not_caps" parent="body">
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <style name="body_bold">
+        <item name="android:textSize">@dimen/body_font_size</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
 </resources>

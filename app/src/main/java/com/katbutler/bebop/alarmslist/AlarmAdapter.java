@@ -1,12 +1,16 @@
 package com.katbutler.bebop.alarmslist;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.database.DataSetObserver;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -27,6 +31,19 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
     private boolean mDataValid;
     private int mRowIdColumn;
     private OnAlarmStateChangeListener onAlarmStateChangeListener;
+    private OnAlarmDeleteListener onAlarmDeleteListener;
+    private LayoutInflater mFactory;
+
+
+
+    public interface OnAlarmStateChangeListener {
+        void onAlarmStateChange(Alarm alarm);
+    }
+
+    public interface OnAlarmDeleteListener {
+        void onAlarmDeleted(Alarm alarm);
+    }
+
 
     public AlarmAdapter(Cursor cursor) {
         mCursor = cursor;
@@ -38,9 +55,16 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (mFactory == null) {
+            setLayoutInflater(parent.getContext());
+        }
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.alarm_list_item, parent, false);
         return new ViewHolder(v);
+    }
+
+    private void setLayoutInflater(Context context) {
+        mFactory = LayoutInflater.from(context);
     }
 
     /**
@@ -85,6 +109,8 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
     }
 
     private class NotifyingDataSetObserver extends DataSetObserver {
+
+
         @Override
         public void onChanged() {
             super.onChanged();
@@ -108,18 +134,25 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
 
         holder.setTime(alarm.getAlarmTime());
         holder.setAlarmStateOn(alarm.isEnabled());
+        holder.setDeleteBtnOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (getOnAlarmDeleteListener() != null) {
+                    getOnAlarmDeleteListener().onAlarmDeleted(alarm);
+                }
+            }
+        });
         holder.setOnCheckedListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 alarm.setEnabled(isChecked);
-                getOnAlarmStateChangeListener().onAlarmStateChange(alarm);
+                if (getOnAlarmStateChangeListener() != null)
+                    getOnAlarmStateChangeListener().onAlarmStateChange(alarm);
             }
         });
+
     }
 
-    public interface OnAlarmStateChangeListener {
-        void onAlarmStateChange(Alarm alarm);
-    }
 
     @Override
     public int getItemCount() {
@@ -160,17 +193,39 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         this.onAlarmStateChangeListener = onAlarmStateChangeListener;
     }
 
+    public OnAlarmDeleteListener getOnAlarmDeleteListener() {
+        return onAlarmDeleteListener;
+    }
+
+    public void setOnAlarmDeleteListener(OnAlarmDeleteListener onAlarmDeleteListener) {
+        this.onAlarmDeleteListener = onAlarmDeleteListener;
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         private final TextView mTimeTextView;
         private final TextView mAmPmText;
         private final Switch mAlarmStateSwitch;
+        private final LinearLayout mRepeatDays;
+        private final ImageButton mDeleteBtn;
+        private final Button[] dayButtons = new Button[7];
 
         public ViewHolder(View itemView) {
             super(itemView);
             mTimeTextView = (TextView) itemView.findViewById(R.id.time_text);
             mAmPmText = (TextView) itemView.findViewById(R.id.ampm_text);
             mAlarmStateSwitch = (Switch) itemView.findViewById(R.id.alarm_state_switch);
+            mDeleteBtn = (ImageButton) itemView.findViewById(R.id.delete_btn);
+            mRepeatDays = (LinearLayout) itemView.findViewById(R.id.repeat_days);
+
+            // Build button for each day.
+            for (int i = 0; i < 7; i++) {
+                final Button dayButton = (Button) mFactory.inflate(R.layout.day_button, mRepeatDays, false /* attachToRoot */);
+                dayButton.setText("S"); //mShortWeekDayStrings[DAY_ORDER[i]]
+                dayButton.setContentDescription("Sunday"); //mLongWeekDayStrings[DAY_ORDER[i]]
+                mRepeatDays.addView(dayButton);
+                dayButtons[i] = dayButton;
+            }
         }
 
         public void setTime(LocalTime time) {
@@ -179,6 +234,10 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
 
             mTimeTextView.setText(fmtTime.print(time));
             mAmPmText.setText(fmtAmPm.print(time));
+        }
+
+        public void setDeleteBtnOnClickListener(View.OnClickListener listener) {
+            mDeleteBtn.setOnClickListener(listener);
         }
 
         public void setOnCheckedListener(CompoundButton.OnCheckedChangeListener listener) {

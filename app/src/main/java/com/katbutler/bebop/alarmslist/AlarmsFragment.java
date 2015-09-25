@@ -77,6 +77,13 @@ public class AlarmsFragment extends BaseFragment<AlarmsPresenter, AlarmsPresente
                 Alarm.updateAlarm(getContext().getContentResolver(), alarm);
             }
         });
+        mAdapter.setOnAlarmDeleteListener(new AlarmAdapter.OnAlarmDeleteListener() {
+
+            @Override
+            public void onAlarmDeleted(Alarm alarm) {
+                Alarm.deleteAlarm(getContext().getContentResolver(), alarm);
+            }
+        });
         mAlarmRecyclerView.setAdapter(mAdapter);
         mAlarmRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 

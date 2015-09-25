@@ -2,41 +2,80 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/alarm_item_container"
     android:layout_width="match_parent"
-    android:layout_height="150dp"
-    android:background="@color/bebop_primary">
+    android:layout_height="250dp"
+    android:background="@color/bebop_primary"
+    >
 
-    <TextView
-        android:id="@+id/time_text"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:paddingStart="15dp"
-        android:paddingEnd="5dp"
-        android:text="12:00"
-        android:textStyle="normal"
-        android:textColor="@color/bebop_white"
-        android:textSize="40dp"
-        android:layout_marginTop="40dp"/>
-
-    <TextView
-        android:id="@+id/ampm_text"
-        android:layout_toEndOf="@+id/time_text"
-        android:layout_marginTop="50dp"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:paddingTop="18dp"
-        android:text="@string/am"
-        android:textStyle="normal"
-        android:textColor="@color/bebop_white"
-        android:textSize="10dp"/>
-
-    <Switch
-        android:id="@+id/alarm_state_switch"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:id="@+id/extra_alarm_info"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="15dp"
-        android:layout_marginTop="50dp"
-        android:layout_alignParentEnd="true"
-        android:checked="true" />
+        android:paddingTop="0dp"
+        android:layout_below="@+id/main_alarm_info">
+
+        <CheckBox
+            android:id="@+id/alarm_repeat"
+            android:layout_width="wrap_content"
+            android:layout_height="48dip"
+            android:layout_gravity="center_vertical|start"
+            android:layout_marginStart="15dp"
+            android:text="@string/repeat"
+            android:textSize="16sp"
+            android:paddingStart="16dip"
+            android:textColor="@color/bebop_white" />
+
+        <LinearLayout
+            android:id="@+id/repeat_days"
+            android:layout_width="match_parent"
+            android:layout_height="48dip"
+            android:layout_gravity="top"
+            android:orientation="horizontal"
+            android:visibility="gone">
+            <!-- Day buttons are put here programatically -->
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/main_alarm_info"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="@color/bebop_primary">
+
+        <TextView
+            android:id="@+id/time_text"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingStart="15dp"
+            android:paddingEnd="5dp"
+            android:text="12:00"
+            android:textStyle="normal"
+            android:textColor="@color/bebop_white"
+            android:textSize="40dp"
+            android:layout_marginTop="40dp"/>
+
+        <TextView
+            android:id="@+id/ampm_text"
+            android:layout_toEndOf="@+id/time_text"
+            android:layout_marginTop="50dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingTop="18dp"
+            android:text="@string/am"
+            android:textStyle="normal"
+            android:textColor="@color/bebop_white"
+            android:textSize="10dp"/>
+
+        <Switch
+            android:id="@+id/alarm_state_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="15dp"
+            android:layout_marginTop="50dp"
+            android:layout_alignParentEnd="true"
+            android:checked="true" />
+
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/expander"
@@ -44,19 +83,32 @@
         android:layout_height="40dp"
         android:layout_above="@+id/alarm_divider">
 
+        <ImageButton
+            android:id="@+id/delete_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:background="#00000000"
+            android:src="@drawable/ic_delete_white_24dp"
+            android:visibility="visible" />
+
         <TextView
             android:id="@+id/alarm_dow"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="@string/tomorrow"
             android:textColor="@color/bebop_white"
-            android:paddingStart="20dp"/>
+            android:layout_marginStart="60dp"
+            android:layout_marginEnd="20dp"
+            android:visibility="visible" />
 
-        <ImageView
+        <ImageButton
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginEnd="20dp"
             android:layout_alignParentEnd="true"
+            android:background="#00000000"
             android:src="@drawable/ic_keyboard_arrow_down_white_24dp"/>
 
     </RelativeLayout>

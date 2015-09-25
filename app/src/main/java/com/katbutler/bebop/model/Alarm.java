@@ -366,6 +366,11 @@ public class Alarm implements Comparable<Alarm>, Parcelable, BebopContract.Alarm
      * @return The Alarm object as passed into this function.
      */
     public static Alarm deleteAlarm(ContentResolver resolver, Alarm alarm) {
-        throw new UnsupportedOperationException("deleteAlarm has not been implemented");
+        int deleted = resolver.delete(getUri(alarm.getId()), null, null);
+        if (deleted != 1) {
+            BebopLog.wtf("One alarm should have been deleted but instead %d alarms were deleted.", deleted);
+        }
+        return alarm;
+
     }
 }

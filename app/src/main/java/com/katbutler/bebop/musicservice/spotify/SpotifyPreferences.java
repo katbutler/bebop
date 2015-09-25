@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 
 import com.katbutler.bebop.musicservice.RemoteMusicPreferences;
+import com.katbutler.bebop.utils.BebopLog;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
@@ -66,12 +67,14 @@ public class SpotifyPreferences extends RemoteMusicPreferences implements Spotif
     public void onAuthResult(int resultCode, Intent intent) {
         mResponse = AuthenticationClient.getResponse(resultCode, intent);
         if (mResponse.getType() == AuthenticationResponse.Type.TOKEN) {
-            if (mResponse.getError() == null) {
-                mAccessToken = mResponse.getAccessToken();
-                mTokenExpiryDateTime = DateTime.now().plusSeconds(mResponse.getExpiresIn());
-            }
+            mAccessToken = mResponse.getAccessToken();
+            mTokenExpiryDateTime = DateTime.now().plusSeconds(mResponse.getExpiresIn());
+            saveState();
+
+        } else if(mResponse.getType() == AuthenticationResponse.Type.ERROR) {
+            BebopLog.e(mResponse.getError());
         }
-        saveState();
+
     }
 
     public boolean hasAccessToken() {

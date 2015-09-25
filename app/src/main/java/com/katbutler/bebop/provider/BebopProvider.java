@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.katbutler.bebop.utils.BebopLog;
@@ -142,7 +143,32 @@ public class BebopProvider extends ContentProvider{
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        return 0;
+        int count = 0;
+        String primaryKey;
+        SQLiteDatabase db = mDatabaseHelper.getWritableDatabase();
+        switch (sURLMatcher.match(uri)) {
+            case ALARMS:
+                count = db.delete(BebopDatabaseHelper.ALARMS_TABLE_NAME, selection, selectionArgs);
+                break;
+            case ALARMS_ID:
+                primaryKey = uri.getLastPathSegment();
+                if (TextUtils.isEmpty(selection)) {
+                    selection = BebopContract.AlarmsColumns._ID + "=" + primaryKey;
+                } else {
+                    selection = BebopContract.AlarmsColumns._ID + "=" + primaryKey +
+                            " AND (" + selection + ")";
+                }
+                count = db.delete(BebopDatabaseHelper.ALARMS_TABLE_NAME, selection, selectionArgs);
+                break;
+            case INSTANCES:
+                throw new UnsupportedOperationException("Deleting instances not implemented yet.");
+
+            case INSTANCES_ID:
+                throw new UnsupportedOperationException("Deleting instances id not implemented yet.");
+
+        }
+        getContext().getContentResolver().notifyChange(uri, null);
+        return count;
     }
 
     @Override

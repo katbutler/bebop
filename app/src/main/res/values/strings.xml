@@ -29,4 +29,5 @@
          this character, i.e. "Mon, Tue, Wed" -->
     <string name="day_concat">", "</string>
     <string name="spotify">Spotify</string>
+    <string name="repeat">Repeat</string>
 </resources>
