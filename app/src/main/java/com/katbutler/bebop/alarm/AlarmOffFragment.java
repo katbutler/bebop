@@ -26,7 +26,7 @@ public class AlarmOffFragment extends Fragment {
             public void run() {
                 AlarmOffFragment.this.getActivity().finish();
             }
-        }, 5000);
+        }, 2000);
     }
 
     @Nullable

@@ -52,8 +52,8 @@ public class SpotifyMusicObject extends RemoteMusicObject<PlayConfig> implements
 
     @Override
     public void onStop() {
-        mPlayer.pause();
         if (!mPlayer.isShutdown()) {
+            mPlayer.pause();
             mPlayer.shutdownNow();
         }
     }

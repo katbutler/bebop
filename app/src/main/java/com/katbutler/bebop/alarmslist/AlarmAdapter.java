@@ -87,30 +87,59 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         if (newCursor == mCursor) {
             return null;
         }
-        final Cursor oldCursor = mCursor;
-        if (oldCursor != null && mDataSetObserver != null) {
-            oldCursor.unregisterDataSetObserver(mDataSetObserver);
+        Cursor oldCursor = mCursor;
+        if (oldCursor != null) {
+//            if (mChangeObserver != null) {
+//                oldCursor.unregisterContentObserver(mChangeObserver);
+//            }
+            if (mDataSetObserver != null) {
+                oldCursor.unregisterDataSetObserver(mDataSetObserver);
+            }
         }
         mCursor = newCursor;
-        if (mCursor != null) {
+        if (newCursor != null) {
+//            if (mChangeObserver != null) {
+//                newCursor.registerContentObserver(mChangeObserver);
+//            }
             if (mDataSetObserver != null) {
-                mCursor.registerDataSetObserver(mDataSetObserver);
+                newCursor.registerDataSetObserver(mDataSetObserver);
             }
             mRowIdColumn = newCursor.getColumnIndexOrThrow("_id");
             mDataValid = true;
+
+            int newSize = newCursor.getCount();
+            int oldSize = (oldCursor != null) ? oldCursor.getCount() : 0;
+            int diff = newSize - oldSize;
+
+            // If Alarm is added
+            if (diff == 1) {
+                int pos = Alarm.findPositionOfAddedRow(newCursor, oldCursor);
+                if (pos != -1) {
+                    notifyItemInserted(pos);
+                    return oldCursor;
+                }
+            }
+
+            // If Alarm is deleted
+            if (diff == -1) {
+                int pos = Alarm.findPositionOfDeletedRow(newCursor, oldCursor);
+                if (pos != -1) {
+                    notifyItemRemoved(pos);
+                    return oldCursor;
+                }
+            }
+
             notifyDataSetChanged();
+            return oldCursor;
         } else {
             mRowIdColumn = -1;
             mDataValid = false;
             notifyDataSetChanged();
-            //There is no notifyDataSetInvalidated() method in RecyclerView.Adapter
         }
         return oldCursor;
     }
 
     private class NotifyingDataSetObserver extends DataSetObserver {
-
-
         @Override
         public void onChanged() {
             super.onChanged();
@@ -128,10 +157,11 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, final int position) {
         final Cursor cur = getCursorAtPosition(position);
         final Alarm alarm = Alarm.createFromCursor(cur);
 
+        holder.setAlarm(alarm);
         holder.setTime(alarm.getAlarmTime());
         holder.setAlarmStateOn(alarm.isEnabled());
         holder.setDeleteBtnOnClickListener(new View.OnClickListener() {
@@ -151,6 +181,18 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
             }
         });
 
+    }
+
+    private int getPositionForAlarm(Alarm alarm) {
+        if (getCursor().moveToFirst()) {
+            do {
+                Alarm a = Alarm.createFromCursor(getCursor());
+                if (a.getId() == alarm.getId()) {
+                    return getCursor().getPosition();
+                }
+            } while (getCursor().moveToNext());
+        }
+        return -1;
     }
 
 
@@ -209,6 +251,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         private final LinearLayout mRepeatDays;
         private final ImageButton mDeleteBtn;
         private final Button[] dayButtons = new Button[7];
+        private Alarm alarm;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -236,7 +279,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
             mAmPmText.setText(fmtAmPm.print(time));
         }
 
-        public void setDeleteBtnOnClickListener(View.OnClickListener listener) {
+        public void setDeleteBtnOnClickListener(final View.OnClickListener listener) {
             mDeleteBtn.setOnClickListener(listener);
         }
 
@@ -246,6 +289,10 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
 
         public void setAlarmStateOn(boolean alarmStateOn) {
             mAlarmStateSwitch.setChecked(alarmStateOn);
+        }
+
+        public void setAlarm(Alarm alarm) {
+            this.alarm = alarm;
         }
     }
 }

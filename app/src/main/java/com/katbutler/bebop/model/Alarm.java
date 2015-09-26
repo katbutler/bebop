@@ -371,6 +371,41 @@ public class Alarm implements Comparable<Alarm>, Parcelable, BebopContract.Alarm
             BebopLog.wtf("One alarm should have been deleted but instead %d alarms were deleted.", deleted);
         }
         return alarm;
+    }
 
+    public static int findPositionOfAddedRow(Cursor newCursor, Cursor oldCursor) {
+        boolean allowed = newCursor.moveToFirst();
+        allowed = oldCursor.moveToFirst() && allowed;
+        if (allowed) {
+            do {
+                Long newId = newCursor.getLong(ID_INDEX);
+                Long oldId = oldCursor.getLong(ID_INDEX);
+                if (newId != oldId) {
+                    return newCursor.getPosition();
+                }
+            } while(newCursor.moveToNext() && oldCursor.moveToNext());
+            if (newCursor.isLast() && oldCursor.isAfterLast()) {
+                return newCursor.getPosition();
+            }
+        }
+        return -1;
+    }
+
+    public static int findPositionOfDeletedRow(Cursor newCursor, Cursor oldCursor) {
+        boolean allowed = newCursor.moveToFirst();
+        allowed = oldCursor.moveToFirst() && allowed;
+        if (allowed) {
+            do {
+                Long newId = newCursor.getLong(ID_INDEX);
+                Long oldId = oldCursor.getLong(ID_INDEX);
+                if (newId != oldId) {
+                    return oldCursor.getPosition();
+                }
+            } while(newCursor.moveToNext() && oldCursor.moveToNext());
+            if (newCursor.isLast() && oldCursor.isAfterLast()) {
+                return newCursor.getPosition();
+            }
+        }
+        return -1;
     }
 }
